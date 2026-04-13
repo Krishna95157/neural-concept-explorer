@@ -1,63 +1,117 @@
-# Embedding Space Explorer 🧠
+# Neural Concept Explorer
 
-> An interactive AI visualisation product for exploring, comparing, and understanding text embeddings in 2D and 3D space.
+> An interactive AI engineering dashboard that connects **tokenization**, **knowledge graphs**, and **embedding space** in one unified visualization — showing how raw text becomes structured meaning.
 
 <p align="center">
-  <img src="docs/screenshots/app-compare.png" alt="Embedding Space Explorer - Compare View" width="100%" />
+  <img src="docs/screenshots/graph-tab-demo.png" alt="Knowledge Graph Tab — 65 entities, 160 relations, community detection" width="100%" />
 </p>
 
-## 🎬 Demo Video
-
-[![Demo Video](https://img.shields.io/badge/▶%20Watch%20Demo-Google%20Drive-blue?style=for-the-badge&logo=google-drive)](https://drive.google.com/file/d/1naDUCpqt5S8c6UYMI98BENHlnhcZHUMY/view?usp=sharing)
+> **What you see above:** The Knowledge Graph tab built from the *AI Knowledge Graph Corpus*. **65 entities** extracted (models, concepts, techniques, tools, tasks), **160 edges** from co-occurrence and relation patterns, **9 communities** detected via greedy modularity, and **graph density 0.0385**. Node size reflects frequency; color reflects entity type. Right panel shows top entities by centrality and community groupings. Build time: 5.266s including embedding generation.
 
 ---
 
-## ✨ Features
+## The Core Idea
 
-| Feature | Description |
+Most AI tools show one thing at a time — a scatter plot, or a graph, or a tokenizer output. This project shows **all three layers at once** and lets you compare them:
+
+| Layer | Question it answers |
 |---|---|
-| 🗺️ **2D & 3D Scatter Plot** | Interactive Plotly scatter with hover labels, click-to-inspect, category & cluster colouring |
-| 🌡️ **Cosine Similarity Heatmap** | Pairwise similarity matrix for all input texts |
-| 🔗 **Nearest Neighbours Panel** | Top-k most similar texts with similarity score bars |
-| ⚖️ **Model Comparison** | Side-by-side scatter + timing for MiniLM, MPNet, GloVe |
-| 🔀 **Context-Shift Demo** | Same word in different contexts — shows contextual vs static embedding difference |
-| 🎯 **KMeans Clustering** | Automatic cluster overlay on scatter plots |
-| 📚 **Educational Cards** | Built-in explanations of embeddings, cosine similarity, PCA/t-SNE/UMAP |
-| 📦 **4 Demo Datasets** | Semantic words, sentence pairs, context-shift, AI documents |
+| **Tokens** | How does the tokenizer split this sentence? Which are subwords? |
+| **Knowledge Graph** | Which entities exist? How are they structurally connected? |
+| **Embeddings** | Which entities are semantically similar in vector space? |
+| **Hybrid** | Where do graph structure and embedding space agree — and disagree? |
+
+The **Hybrid view** is the core insight: two entities can be *directly connected in the graph* (functional relationship) but *far apart in embedding space* (semantically different). Or *semantically close in embedding space* but *not connected in the graph* — a hidden relationship the text didn't explicitly state.
 
 ---
 
-## 🛠️ Tech Stack
+## Features
 
-**Backend**
-- [FastAPI](https://fastapi.tiangolo.com/) — REST API
-- [sentence-transformers](https://www.sbert.net/) — `all-MiniLM-L6-v2`, `all-mpnet-base-v2`
-- GloVe via gensim downloader (static embeddings)
-- scikit-learn — PCA, t-SNE, KMeans
-- UMAP (optional)
-- NumPy / Pandas
+### Token Explorer
+- Per-sentence token breakdown with color-coded tiles — normal, subword (`##`), and special tokens
+- Token IDs shown beneath each tile
+- BERT (WordPiece), GPT-2 (BPE), and RoBERTa tokenizer support
+- Corpus-level token frequency bar chart across all loaded texts
+- Token co-occurrence heatmap
 
-**Frontend**
-- React 18 + TypeScript
-- Vite 4
-- Tailwind CSS 3
-- Plotly.js — scatter, 3D, heatmap
-- Zustand — state management
-- Axios
+### Knowledge Graph
+- Entity extraction from an AI/ML domain dictionary + spaCy NER
+- Relation extraction via sentence patterns: `uses`, `is_a`, `trained_on`, `combines`, `requires`, `improves`, and more
+- Co-occurrence edges for implicit connections within documents
+- Force-directed SVG graph with **drag, pan, zoom** — no external graph library
+- Node color by entity type: Model · Concept · Technique · Tool · Dataset · Task · Component · Company
+- Node size by frequency; click any node to inspect its full detail
+- Graph analytics: degree centrality, betweenness, community detection (greedy modularity)
+- Per-node panel: graph neighbors with relation labels + semantic embedding neighbors
+
+### Embedding Space
+- MiniLM-L6-v2, MPNet-base-v2, GloVe 50d
+- 2D / 3D scatter via PCA, t-SNE, or UMAP
+- Pairwise cosine similarity heatmap
+- Nearest-neighbour inspection on click
+- Side-by-side model comparison
+
+### Hybrid Analysis
+- Select any entity: see **Graph Only** (structural, not semantic) · **Overlap** (both agree) · **Semantic Only** (close in meaning, not connected)
+- Auto-generated insight text explaining what each mismatch means
 
 ---
 
-## 🚀 Quick Start
+## Architecture
+
+```
+raw text
+    │
+    ├── Tokenizer (BERT / GPT-2 / RoBERTa)
+    │       → token tiles · subword breakdown · frequency stats · co-occurrence
+    │
+    ├── Entity Extractor (AI domain dict + spaCy NER)
+    │       → named entities: models, concepts, techniques, tools, tasks
+    │
+    ├── Relation Extractor (regex sentence patterns)
+    │       → typed edges: uses · is_a · trained_on · combines · requires …
+    │
+    ├── Knowledge Graph (NetworkX)
+    │       → nodes (entities) + edges (relations + co-occurrence)
+    │       → centrality · betweenness · community detection
+    │
+    └── Embedding Model (sentence-transformers)
+            → dense vectors per entity
+            → cosine similarity · nearest neighbours
+            → PCA / t-SNE / UMAP for 2D / 3D scatter
+```
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Backend | Python · FastAPI · uvicorn |
+| Embeddings | sentence-transformers (MiniLM, MPNet) · GloVe via gensim |
+| Tokenizer | HuggingFace `transformers` — BERT, GPT-2, RoBERTa |
+| Graph | NetworkX · spaCy |
+| Frontend | React 18 · TypeScript · Tailwind CSS · Vite |
+| Charts | Plotly.js — scatter, heatmap, bar |
+| Graph Vis | Custom SVG force-directed simulation |
+| State | Zustand |
+
+---
+
+## Quick Start
 
 ```bash
-git clone https://github.com/vamsikrishna2002/embedding-space-explorer.git
-cd embedding-space-explorer
+git clone https://github.com/vamsikrishna2002/neural-concept-explorer.git
+cd neural-concept-explorer
 bash start.sh
 ```
 
-Then open **http://localhost:5173** in your browser.
+Open **http://localhost:5173**
 
-> The first startup downloads the MiniLM model (~90 MB). Subsequent starts are instant.
+The script automatically:
+- Creates a Python virtualenv and installs all dependencies
+- Downloads the spaCy English model if missing
+- Starts the backend on port 8000 and the frontend on port 5173
 
 ### Manual start
 
@@ -66,7 +120,8 @@ Then open **http://localhost:5173** in your browser.
 cd backend
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+python -m spacy download en_core_web_sm
+uvicorn app.main:app --reload --port 8000
 
 # Terminal 2 — Frontend
 cd frontend
@@ -76,101 +131,110 @@ npm run dev
 
 ---
 
-## 🏗️ Architecture
+## Usage Guide
 
-```
-User Input
-    │
-    ▼
-React Frontend (Vite + Tailwind + Plotly.js)
-    │  POST /api/embed  or  POST /api/compare
-    ▼
-FastAPI Backend
-    ├─ Embedding Service  ──▶  sentence-transformers / GloVe
-    ├─ Similarity Service ──▶  Cosine similarity matrix + KNN + KMeans
-    └─ Reduction Service  ──▶  PCA / t-SNE / UMAP
-    │
-    ▼  JSON response
-Frontend Visualisations
-    ├─ Scatter Plot (2D / 3D)
-    ├─ Cosine Similarity Heatmap
-    ├─ Nearest Neighbours Panel
-    └─ Model Comparison (side-by-side)
-```
+1. Open `http://localhost:5173`
+2. **Load a dataset** — select *AI Knowledge Graph Corpus* for the richest graph experience
+3. **Tokens tab** → paste any sentence, click *Tokenize*; or click *Analyze Corpus Tokens* for frequency and co-occurrence charts
+4. **Graph tab** → click *Build Knowledge Graph* to extract entities and relations; click any node to inspect neighbors
+5. **Scatter / Heatmap** → click *Generate* to compute embeddings and see the vector space
+6. **Hybrid tab** → after building the graph, select any entity to compare graph neighbors vs semantic neighbors
 
 ---
 
-## 📁 Project Structure
+## API Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/health` | Backend status and loaded models |
+| POST | `/api/embed` | Generate embeddings + scatter coords |
+| POST | `/api/compare` | Compare two models side by side |
+| POST | `/api/tokens/tokenize` | Tokenize a single sentence |
+| POST | `/api/tokens/corpus-stats` | Token frequency + co-occurrence for a corpus |
+| POST | `/api/graph/build` | Build knowledge graph from texts |
+| POST | `/api/graph/node-detail` | Full detail for a graph node |
+| GET | `/api/datasets` | List built-in datasets |
+| GET | `/api/datasets/{name}` | Fetch a dataset |
+
+Interactive API docs: **http://localhost:8000/docs**
+
+---
+
+## Built-in Datasets
+
+| Dataset | Description |
+|---|---|
+| AI Knowledge Graph Corpus | 20 rich AI/ML paragraphs — best for graph and hybrid views |
+| AI Topic Chunks | 15 AI topic paragraphs for embedding clusters |
+| Semantic Word Groups | 30 words across animals, fruits, vehicles, emotions, professions |
+| Sentence Similarity Pairs | Paraphrase pairs showing semantic closeness |
+| Context-Shift (Word Sense) | Same word in different contexts — contextual vs static embeddings |
+
+---
+
+## Project Structure
 
 ```
-embedding-space-explorer/
+neural-concept-explorer/
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                   # FastAPI app + CORS
-│   │   ├── models/schemas.py         # Pydantic models
-│   │   ├── routes/                   # embed, compare, datasets, health
-│   │   ├── services/                 # embedding, reduction, similarity, pipeline
-│   │   └── data/sample_datasets.py  # 4 built-in datasets
-│   ├── tests/test_pipeline.py        # 6 unit tests (all passing ✅)
+│   │   ├── main.py                    # FastAPI app + CORS
+│   │   ├── routes/
+│   │   │   ├── embed.py               # Embedding endpoints
+│   │   │   ├── tokenize.py            # Token endpoints
+│   │   │   ├── graph.py               # Knowledge graph endpoints
+│   │   │   ├── datasets.py
+│   │   │   └── health.py
+│   │   ├── services/
+│   │   │   ├── embedding_service.py   # sentence-transformers + GloVe
+│   │   │   ├── tokenizer_service.py   # HuggingFace tokenizers
+│   │   │   ├── graph_service.py       # Entity extraction + NetworkX
+│   │   │   ├── pipeline_service.py    # Embed → reduce → cluster
+│   │   │   ├── reduction_service.py   # PCA / t-SNE / UMAP
+│   │   │   └── similarity_service.py  # Cosine similarity + KMeans
+│   │   └── data/
+│   │       └── sample_datasets.py     # Built-in datasets
 │   └── requirements.txt
-│
 ├── frontend/
 │   └── src/
 │       ├── App.tsx
 │       ├── components/
-│       │   ├── layout/               # Header, ControlPanel, TabBar
-│       │   ├── plots/                # ScatterPlot, Heatmap, CompareView
-│       │   └── panels/               # NearestNeighbors, ExplainPanel
-│       ├── hooks/useStore.ts         # Zustand state
-│       ├── utils/api.ts              # Axios client
-│       └── types/index.ts
-│
-├── docs/screenshots/                 # App screenshots
-├── start.sh                          # One-command launcher
+│       │   ├── layout/                # Header, ControlPanel, TabBar
+│       │   ├── plots/                 # ScatterPlot, Heatmap, GraphView
+│       │   │                          # TokenView, KnowledgeGraphTab
+│       │   │                          # HybridView, CompareView
+│       │   └── panels/                # NearestNeighbors, Explain
+│       ├── hooks/useStore.ts          # Zustand global state
+│       ├── types/index.ts             # TypeScript interfaces
+│       └── utils/api.ts               # Axios API client
+├── docs/screenshots/
+│   └── graph-tab-demo.png
+├── start.sh                           # One-command launcher
 └── README.md
 ```
 
 ---
 
-## 🔌 API Reference
+## Key Concepts
 
-| Method | Path | Description |
-|---|---|---|
-| `GET` | `/health` | Server health + loaded models |
-| `GET` | `/api/datasets` | List all demo datasets |
-| `GET` | `/api/datasets/{name}` | Fetch dataset items |
-| `POST` | `/api/embed` | Run full pipeline for one model |
-| `POST` | `/api/compare` | Run pipeline for multiple models |
-
-Interactive docs → **http://localhost:8000/docs**
+- **Tokenization** — text is split into subword units before any model sees it; BERT uses WordPiece, GPT-2 uses BPE
+- **Embeddings** — dense numeric vectors representing semantic meaning; similar concepts cluster nearby
+- **Cosine Similarity** — measures the angle between vectors; `1.0` = identical direction, `0.0` = orthogonal
+- **Knowledge Graph** — entities as nodes, relationships as typed edges; symbolic structure
+- **Hybrid Analysis** — comparing structural graph neighbors vs semantic embedding neighbors reveals gaps between what text *says* explicitly and what it *means* semantically
+- **PCA** — linear reduction, preserves global variance, fastest
+- **t-SNE / UMAP** — non-linear, better for revealing local cluster structure
 
 ---
 
-## 🧪 Tests
-
-```bash
-cd backend
-source .venv/bin/activate
-pytest tests/ -v
-```
-
-All 6 tests pass ✅
-
----
-
-## 📖 Key Concepts
-
-- **Embeddings** — dense numeric vectors representing semantic meaning of text
-- **Cosine Similarity** — measures angle between vectors; `1.0` = identical, `0.0` = unrelated
-- **PCA** — linear reduction, preserves global variance, fast
-- **t-SNE** — non-linear, preserves local clusters, slower
-- **UMAP** — balances local + global structure, faster than t-SNE
-- **Contextual vs Static** — MiniLM/MPNet shift "bank" depending on sentence; GloVe does not
-
----
-
-## 👤 Author
+## Author
 
 **Vamsi Krishna**
 - GitHub: [@vamsikrishna2002](https://github.com/vamsikrishna2002)
 - Email: vamsikrishna80940@gmail.com
+
+---
+
+## License
+
+MIT

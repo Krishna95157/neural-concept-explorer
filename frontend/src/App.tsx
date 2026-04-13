@@ -9,6 +9,9 @@ import { CompareView } from './components/plots/CompareView';
 import { ExplainPanel } from './components/panels/ExplainPanel';
 import { TimingBadge } from './components/panels/TimingBadge';
 import { ColorByToggle } from './components/panels/ColorByToggle';
+import { TokenView } from './components/plots/TokenView';
+import { KnowledgeGraphTab } from './components/plots/KnowledgeGraphTab';
+import { HybridView } from './components/plots/HybridView';
 import { useStore } from './hooks/useStore';
 import { api } from './utils/api';
 import type { PointData } from './types';
@@ -16,28 +19,37 @@ import { resetColors } from './utils/colors';
 
 function LandingHero() {
   return (
-    <div className="flex flex-col items-center justify-center py-16 gap-4 text-center">
-      <div className="w-16 h-16 rounded-2xl bg-brand-100 border border-brand-200 flex items-center justify-center text-3xl mb-2 shadow-sm">
+    <div className="flex flex-col items-center justify-center py-14 gap-4 text-center">
+      <div className="w-16 h-16 rounded-2xl bg-brand-50 border border-brand-200 flex items-center justify-center text-3xl mb-1 shadow-sm">
         🧠
       </div>
       <h2 className="text-3xl font-bold gradient-text">
-        Embedding Space Explorer
+        Knowledge Graph · Embedding · Token Visualizer
       </h2>
-      <p className="text-gray-500 max-w-xl leading-relaxed">
-        Select a dataset or enter your own text, choose an embedding model and
-        reduction method, then click <strong className="text-gray-700">Generate</strong> to
-        visualise how language lives in vector space.
+      <p className="text-gray-500 max-w-2xl leading-relaxed text-sm">
+        Explore how raw text becomes tokens, tokens form entities, entities build a knowledge graph,
+        and embeddings reveal semantic structure — all in one interactive dashboard.
       </p>
-      <div className="flex flex-wrap gap-2 justify-center mt-2">
-        {['2D & 3D Scatter Plots', 'Cosine Similarity Heatmap', 'Nearest Neighbours', 'Model Comparison', 'Context-Shift Demo'].map((f) => (
+      <div className="flex flex-wrap gap-2 justify-center mt-1">
+        {[
+          '🔤 Token Breakdown',
+          '🔡 Frequency & Co-occurrence',
+          '⬡ Knowledge Graph',
+          '🗺️ Embedding Scatter',
+          '🌡️ Similarity Heatmap',
+          '🔀 Hybrid Analysis',
+        ].map((f) => (
           <span
             key={f}
-            className="text-xs px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-500 shadow-sm"
+            className="text-xs px-3 py-1.5 rounded-full bg-white border border-gray-200 text-gray-500 shadow-sm"
           >
-            ✓ {f}
+            {f}
           </span>
         ))}
       </div>
+      <p className="text-xs text-gray-400 mt-2">
+        Start by selecting a dataset or entering your own text in the sidebar, then explore the tabs above.
+      </p>
     </div>
   );
 }
@@ -111,6 +123,10 @@ function App() {
   const hasResult = !!embedResult;
   const hasCompare = !!compareResult;
 
+  // These tabs are always available regardless of embed results
+  const alwaysAvailableTabs = ['tokens', 'graph', 'hybrid', 'explain'];
+  const showContent = hasResult || hasCompare || alwaysAvailableTabs.includes(activeTab);
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg-primary)' }}>
       <Header />
@@ -134,9 +150,9 @@ function App() {
             </div>
           )}
 
-          {!hasResult && !hasCompare && activeTab !== 'explain' && <LandingHero />}
+          {!showContent && <LandingHero />}
 
-          {(hasResult || hasCompare || activeTab === 'explain') && (
+          {showContent && (
             <>
               {hasResult && embedResult && (
                 <div className="mb-3">
@@ -150,6 +166,7 @@ function App() {
 
               <TabBar />
 
+              {/* ── Scatter ── */}
               {activeTab === 'scatter' && hasResult && embedResult && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
@@ -172,7 +189,13 @@ function App() {
                   </p>
                 </div>
               )}
+              {activeTab === 'scatter' && !hasResult && (
+                <div className="card text-gray-400 text-sm text-center py-12">
+                  Click <strong className="text-gray-700">Generate</strong> in the sidebar to create embeddings and see the scatter plot.
+                </div>
+              )}
 
+              {/* ── Heatmap ── */}
               {activeTab === 'heatmap' && hasResult && embedResult && (
                 <div className="card">
                   <h2 className="text-sm font-semibold text-gray-700 mb-3">
@@ -184,7 +207,13 @@ function App() {
                   />
                 </div>
               )}
+              {activeTab === 'heatmap' && !hasResult && (
+                <div className="card text-gray-400 text-sm text-center py-12">
+                  Generate embeddings first to see the similarity heatmap.
+                </div>
+              )}
 
+              {/* ── Neighbours ── */}
               {activeTab === 'neighbors' && (
                 <div className="max-w-xl">
                   <NearestNeighborsPanel
@@ -194,6 +223,7 @@ function App() {
                 </div>
               )}
 
+              {/* ── Compare ── */}
               {activeTab === 'compare' && hasCompare && compareResult && (
                 <CompareView results={compareResult.results as any} />
               )}
@@ -204,6 +234,16 @@ function App() {
                 </div>
               )}
 
+              {/* ── Tokens ── */}
+              {activeTab === 'tokens' && <TokenView />}
+
+              {/* ── Graph ── */}
+              {activeTab === 'graph' && <KnowledgeGraphTab />}
+
+              {/* ── Hybrid ── */}
+              {activeTab === 'hybrid' && <HybridView />}
+
+              {/* ── Explain ── */}
               {activeTab === 'explain' && <ExplainPanel />}
             </>
           )}
@@ -211,8 +251,8 @@ function App() {
       </div>
 
       <footer className="border-t border-gray-200 bg-white px-6 py-3 flex items-center justify-between text-xs text-gray-400">
-        <span>Embedding Space Explorer — AI Visualisation Portfolio Project</span>
-        <span>FastAPI · sentence-transformers · Plotly.js · React · Tailwind</span>
+        <span>Knowledge Graph · Embedding · Token Visualizer — AI Engineering Portfolio</span>
+        <span>FastAPI · sentence-transformers · NetworkX · spaCy · React · Tailwind</span>
       </footer>
     </div>
   );

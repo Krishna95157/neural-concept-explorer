@@ -111,6 +111,33 @@ DATASETS = {
             {"text": "Batch normalisation stabilises training by normalising layer inputs, reducing internal covariate shift.", "label": "BatchNorm", "category": "fundamentals"},
         ],
     },
+
+    "ai_knowledge_graph": {
+        "name": "AI Knowledge Graph Corpus",
+        "description": "Rich AI/ML paragraphs curated to demonstrate entity extraction, graph edges, and semantic clustering across key AI concepts.",
+        "items": [
+            {"text": "The Transformer architecture introduced self-attention, allowing each token to attend to all other tokens in the sequence. This replaced recurrent networks like LSTM and GRU, enabling parallelisation during training.", "label": "Transformer intro", "category": "architecture"},
+            {"text": "BERT is a bidirectional encoder trained with masked language modelling on large text corpora. It uses the Transformer encoder and fine-tuning on downstream tasks like NER and question answering.", "label": "BERT", "category": "architecture"},
+            {"text": "GPT models are autoregressive Transformers that use the decoder to predict the next token. GPT-3 and GPT-4 scale this to hundreds of billions of parameters using deep learning on internet-scale text.", "label": "GPT", "category": "architecture"},
+            {"text": "Embeddings map words or sentences to dense vector representations in a high-dimensional space. Cosine similarity measures the angle between embedding vectors, revealing semantic closeness.", "label": "Embeddings", "category": "representations"},
+            {"text": "RAG, or Retrieval Augmented Generation, combines a retrieval system with a generative model. Documents are embedded and stored in a vector database. At query time, relevant chunks are retrieved and passed to the LLM.", "label": "RAG", "category": "retrieval"},
+            {"text": "Vector databases like Pinecone, Weaviate, and ChromaDB store embeddings and support approximate nearest-neighbour search using FAISS or HNSW indices.", "label": "Vector DB", "category": "retrieval"},
+            {"text": "Tokenization converts raw text into tokens that models can process. BERT uses WordPiece tokenization, GPT-2 uses BPE, and both produce subword tokens that handle out-of-vocabulary words.", "label": "Tokenization", "category": "preprocessing"},
+            {"text": "Knowledge graphs represent entities as nodes and relationships as edges. They enable structured reasoning over symbolic information, complementing the vector representations used by neural networks.", "label": "Knowledge Graphs", "category": "knowledge"},
+            {"text": "Reinforcement learning from human feedback, or RLHF, fine-tunes language models using PPO. A reward model is trained on human preferences and used to guide the LLM policy update.", "label": "RLHF", "category": "training"},
+            {"text": "Attention in the Transformer computes query, key, and value projections. The dot-product attention score is scaled by the square root of the key dimension and passed through a softmax to produce weights.", "label": "Attention mechanism", "category": "architecture"},
+            {"text": "PCA reduces embedding dimensionality by projecting onto principal components. t-SNE and UMAP are non-linear reduction techniques better suited for visualising cluster structure in high-dimensional spaces.", "label": "Dimensionality reduction", "category": "visualisation"},
+            {"text": "Fine-tuning adapts a pre-trained model like BERT or GPT to a specific task. Only the task-specific head and optionally a few upper layers are updated, reducing compute compared to training from scratch.", "label": "Fine-tuning", "category": "training"},
+            {"text": "Convolutional neural networks apply learned filters over spatial inputs. YOLO uses a CNN backbone for real-time object detection, while ViT replaces convolutions with self-attention over image patches.", "label": "CNN vs ViT", "category": "vision"},
+            {"text": "Backpropagation computes gradients through the neural network using the chain rule. The Adam optimiser combines momentum and adaptive learning rates to update weights efficiently.", "label": "Training basics", "category": "training"},
+            {"text": "LangChain and LlamaIndex are frameworks for building LLM applications. They simplify connecting language models to tools, memory, and retrieval systems, enabling RAG pipelines and agents.", "label": "LLM frameworks", "category": "tooling"},
+            {"text": "Overfitting occurs when a model memorises training data and fails to generalise. Regularisation techniques like dropout, weight decay, and layer normalisation help reduce overfitting.", "label": "Overfitting", "category": "fundamentals"},
+            {"text": "Sentence-transformers is a HuggingFace library for computing sentence embeddings using MiniLM, MPNet, and other models. It supports semantic search, clustering, and paraphrase detection.", "label": "Sentence Transformers", "category": "tooling"},
+            {"text": "Diffusion models learn to reverse a noisy process step by step. They have achieved state-of-the-art results in image generation, outperforming GANs in diversity and stability.", "label": "Diffusion models", "category": "generative"},
+            {"text": "spaCy performs named entity recognition using a CNN-based model trained on annotated corpora. It can identify organisations, people, products, and locations in raw text.", "label": "spaCy NER", "category": "tooling"},
+            {"text": "FAISS is a library for efficient similarity search over dense vectors. It supports approximate nearest-neighbour search using inverted file indices and product quantisation, scaling to billions of vectors.", "label": "FAISS", "category": "retrieval"},
+        ],
+    },
 }
 
 

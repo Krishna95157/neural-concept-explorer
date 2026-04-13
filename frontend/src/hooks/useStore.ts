@@ -6,7 +6,14 @@ import type {
   ReductionMethod,
   Dimensions,
   PointData,
+  TokenizeResult,
+  CorpusTokenStats,
+  TokenizerModel,
+  GraphData,
+  NodeDetail,
 } from '../types';
+
+export type ActiveTab = 'scatter' | 'heatmap' | 'neighbors' | 'compare' | 'explain' | 'tokens' | 'graph' | 'hybrid';
 
 interface AppState {
   // Control panel
@@ -23,10 +30,23 @@ interface AppState {
   compareResult: CompareResponse | null;
   selectedPoint: PointData | null;
 
+  // Token state
+  tokenText: string;
+  tokenizerModel: TokenizerModel;
+  tokenizeResult: TokenizeResult | null;
+  corpusStats: CorpusTokenStats | null;
+  tokenLoading: boolean;
+
+  // Graph state
+  graphData: GraphData | null;
+  selectedNode: string | null;
+  nodeDetail: NodeDetail | null;
+  graphLoading: boolean;
+
   // UI
   loading: boolean;
   error: string | null;
-  activeTab: 'scatter' | 'heatmap' | 'neighbors' | 'compare' | 'explain';
+  activeTab: ActiveTab;
 
   // Actions
   setInputTexts: (v: string) => void;
@@ -41,7 +61,18 @@ interface AppState {
   setSelectedPoint: (v: PointData | null) => void;
   setLoading: (v: boolean) => void;
   setError: (v: string | null) => void;
-  setActiveTab: (v: AppState['activeTab']) => void;
+  setActiveTab: (v: ActiveTab) => void;
+
+  setTokenText: (v: string) => void;
+  setTokenizerModel: (v: TokenizerModel) => void;
+  setTokenizeResult: (v: TokenizeResult | null) => void;
+  setCorpusStats: (v: CorpusTokenStats | null) => void;
+  setTokenLoading: (v: boolean) => void;
+
+  setGraphData: (v: GraphData | null) => void;
+  setSelectedNode: (v: string | null) => void;
+  setNodeDetail: (v: NodeDetail | null) => void;
+  setGraphLoading: (v: boolean) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -59,6 +90,17 @@ export const useStore = create<AppState>((set) => ({
   error: null,
   activeTab: 'scatter',
 
+  tokenText: '',
+  tokenizerModel: 'bert',
+  tokenizeResult: null,
+  corpusStats: null,
+  tokenLoading: false,
+
+  graphData: null,
+  selectedNode: null,
+  nodeDetail: null,
+  graphLoading: false,
+
   setInputTexts: (v) => set({ inputTexts: v }),
   setSelectedDataset: (v) => set({ selectedDataset: v }),
   setModel: (v) => set({ model: v }),
@@ -72,4 +114,15 @@ export const useStore = create<AppState>((set) => ({
   setLoading: (v) => set({ loading: v }),
   setError: (v) => set({ error: v }),
   setActiveTab: (v) => set({ activeTab: v }),
+
+  setTokenText: (v) => set({ tokenText: v }),
+  setTokenizerModel: (v) => set({ tokenizerModel: v }),
+  setTokenizeResult: (v) => set({ tokenizeResult: v }),
+  setCorpusStats: (v) => set({ corpusStats: v }),
+  setTokenLoading: (v) => set({ tokenLoading: v }),
+
+  setGraphData: (v) => set({ graphData: v }),
+  setSelectedNode: (v) => set({ selectedNode: v }),
+  setNodeDetail: (v) => set({ nodeDetail: v }),
+  setGraphLoading: (v) => set({ graphLoading: v }),
 }));
