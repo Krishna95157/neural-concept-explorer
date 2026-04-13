@@ -229,12 +229,4 @@ neural-concept-explorer/
 
 ## Author
 
-**Vamsi Krishna**
-- GitHub: [@vamsikrishna2002](https://github.com/vamsikrishna2002)
-- Email: vamsikrishna80940@gmail.com
 
----
-
-## License
-
-MIT
